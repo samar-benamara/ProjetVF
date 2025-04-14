@@ -15,9 +15,24 @@ public class Operation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    @Transient
+    private OperationState state;
+
+
+    public void valider() {
+        state.valider(this);
+    }
+
+    public void setState(OperationState state) {
+        this.state = state;
+    }
+
+    public String getStatus() {
+        return state.getStatus();
+    }
 
     private String type;
-    private String etat;
+
 
     @Column(nullable = true)
     private String numcheque;
@@ -51,6 +66,7 @@ public class Operation {
     // Constructeur simple
     public Operation() {
         this.creationDate = new Date();
+        this.state = new WaitingState();
     }
 
     // Getters et Setters
@@ -68,14 +84,6 @@ public class Operation {
 
     public void setType(String type) {
         this.type = type;
-    }
-
-    public String getEtat() {
-        return etat;
-    }
-
-    public void setEtat(String etat) {
-        this.etat = etat;
     }
 
     public String getNumcheque() {

@@ -36,19 +36,17 @@ public class Bordereauservice {
     }
 
     public Bordereau addOperationsToBordereau(Integer idBordereau, List<Integer> idsOperations) {
-
         Bordereau bordereau = bordereauRepository.getBordereauById(idBordereau);
-
         List<Operation> operations = operationRepository.findAllById(idsOperations);
 
-        operations.forEach(operation -> operation.setEtat("Valid"));
+        operations.forEach(operation -> operation.valider());
 
         bordereau.getOperations().addAll(operations);
-
         return bordereauRepository.save(bordereau);
     }
 
-    public List<OperationResponse> getOperationsInBordereau(Integer idBordereau) {
+
+   /* public List<OperationResponse> getOperationsInBordereau(Integer idBordereau) {
         Bordereau bordereau = bordereauRepository.getBordereauById(idBordereau);
         return bordereau.getOperations().stream()
                 .map(operation -> {
@@ -75,7 +73,7 @@ public class Bordereauservice {
                     return response;
                 })
                 .collect(Collectors.toList());
-    }
+    }*/
 
 
     public List<Bordereau> findAllBodereaux() {
