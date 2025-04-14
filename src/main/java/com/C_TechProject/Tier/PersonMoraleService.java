@@ -12,73 +12,29 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@Transactional
-@RequiredArgsConstructor
-public class PersonMoraleService {
+public class PersonMoraleService extends BasePersonService<PersonMorale, PersonneMoraleRepository> {
 
-    private final PersonneMoraleRepository personneMoraleRepository;
-private final OperationRepository operationRepository;
-    public PersonMorale addCompany(PersonMorale personMorale) {
-        PersonMorale existingCompany = personneMoraleRepository.findByCode(personMorale.getCode());
-        if (existingCompany != null) {
-            throw new IllegalArgumentException("A company with the given code already exists");
-        }
-        return personneMoraleRepository.save(personMorale);
+    public PersonMoraleService(PersonneMoraleRepository repository, OperationRepository operationRepository) {
+        super(repository, operationRepository);
     }
 
-    public PersonMorale findCompanybyid(Integer id) {
-        Optional<PersonMorale> personMorale = personneMoraleRepository.findById(id);
-        if (personMorale.isPresent()) {
-            return personMorale.get();
-        } else {
-            throw new RuntimeException("Bank not found with ID: " + id);
-        }
-    }
-    public PersonMorale updatePersonMorale(Integer id, PersonMorale newPersonMorale) {
-        PersonMorale personMorale = personneMoraleRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("Person morale not found with ID: " + id));
-
-        if (newPersonMorale.getName() != null) {
-            personMorale.setName(newPersonMorale.getName());
-        }
-        if (newPersonMorale.getCode() != null && !newPersonMorale.getCode().equals(personMorale.getCode())) {
-            PersonMorale personWithSameCode = personneMoraleRepository.findByCode(newPersonMorale.getCode());
-            if (personWithSameCode != null && !personWithSameCode.getId().equals(id)) {
-                throw new UserNotFoundException("Code already exists in other companies");
-            }
-            personMorale.setCode(newPersonMorale.getCode());
-        }
-        if (newPersonMorale.getRib() != null && !newPersonMorale.getRib().equals(personMorale.getRib())) {
-            PersonMorale personWithSameRib = personneMoraleRepository.findByRib(newPersonMorale.getRib());
-            if (personWithSameRib != null && !personWithSameRib.getId().equals(id)) {
-                throw new UserNotFoundException("RIB already exists in other companies");
-            }
-            personMorale.setRib(newPersonMorale.getRib());
-        }
-        if (newPersonMorale.getContact() != null) {
-            personMorale.setContact(newPersonMorale.getContact());
-        }
-        if (newPersonMorale.getEmail() != null) {
-            personMorale.setEmail(newPersonMorale.getEmail());
-        }
-
-        personneMoraleRepository.save(personMorale);
-        return personMorale;
+    @Override
+    protected void validateUniqueFields(PersonMorale entity) {
+        repository.findByCode(entity.getCode()).ifPresent(person -> {
+            throw new IllegalArgumentException("Code déjà utilisé");
+        });
     }
 
-    public List<PersonMorale> findAllCompanies() {
-        return personneMoraleRepository.findAll();
+    @Override
+    protected void updateSpecificFields(PersonMorale existing, PersonMorale newEntity) {
+        if (newEntity.getName() != null) existing.setName(newEntity.getName());
+        if (newEntity.getCode() != null) existing.setCode(newEntity.getCode());
     }
-    public void deleteCompany(Integer id) {
-        PersonMorale personMorale = personneMoraleRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("Person not found with ID: " + id));
 
-        List<Operation> operations = operationRepository.findByPersonneMorale(personMorale);
-        if (!operations.isEmpty()) {
-            throw new RuntimeException("Cannot delete company with related operations.");
+    @Override
+    protected void checkAssociatedOperations(PersonMorale entity) {
+        if (!operationRepository.findByPersonneMorale(entity).isEmpty()) {
+            throw new RuntimeException("Opérations associées existantes");
         }
-
-        personneMoraleRepository.delete(personMorale);
     }
-
 }

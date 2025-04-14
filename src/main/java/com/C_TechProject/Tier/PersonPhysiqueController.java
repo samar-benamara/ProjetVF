@@ -20,7 +20,7 @@ public class PersonPhysiqueController {
     @PostMapping("/addperson")
     public ResponseEntity<PersonPhysique> addPerson(@RequestBody PersonPhysique personPhysique) {
         try {
-            PersonPhysique newPerson = personnePhysiqueService.addPerson(personPhysique);
+            PersonPhysique newPerson = personnePhysiqueService.save(personPhysique);
             return new ResponseEntity<>(newPerson, HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
@@ -30,7 +30,7 @@ public class PersonPhysiqueController {
     @GetMapping("/person/{id}")
     public ResponseEntity<PersonPhysique> getPersonById(@PathVariable Integer id) {
         try {
-            PersonPhysique personPhysique = personnePhysiqueService.findPersonbyid(id);
+            PersonPhysique personPhysique = personnePhysiqueService.findById(id);
             return ResponseEntity.ok(personPhysique);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -39,7 +39,7 @@ public class PersonPhysiqueController {
     @PutMapping("/updateperson/{id}")
     public ResponseEntity<PersonPhysique> updatePerson(@PathVariable Integer id, @RequestBody PersonPhysique personPhysique) {
         try {
-            PersonPhysique updatedPersonPhysique = personnePhysiqueService.updatePerson(id, personPhysique);
+            PersonPhysique updatedPersonPhysique = personnePhysiqueService.update(id, personPhysique);
             return ResponseEntity.ok(updatedPersonPhysique);
         } catch (UserNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
@@ -50,13 +50,13 @@ public class PersonPhysiqueController {
 
     @GetMapping("/persons")
     public ResponseEntity<List<PersonPhysique>> getAllPersons() {
-        List<PersonPhysique> personPhysiques = personnePhysiqueService.findAllPersons();
+        List<PersonPhysique> personPhysiques = personnePhysiqueService.findAll();
         return new ResponseEntity<>(personPhysiques, HttpStatus.OK);
     }
     @DeleteMapping("/deleteperson/{id}")
     public ResponseEntity<Void> deletePerson(@PathVariable Integer id) {
         try {
-            personnePhysiqueService.deletePerson(id);
+            personnePhysiqueService.delete(id);
             return ResponseEntity.noContent().build();
         } catch (UserNotFoundException e) {
             return ResponseEntity.notFound().build();

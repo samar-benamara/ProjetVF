@@ -11,6 +11,6 @@ import java.util.Optional;
 // ===== GOF Abstract : Interface spécialisée pour PersonMorale =====
 
 public interface PersonneMoraleRepository extends PersonRepository<PersonMorale> {
-    static Optional<PersonMorale> findByCode(String code);
+     Optional<PersonMorale> findByCode(String code);
 }
 

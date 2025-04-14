@@ -17,7 +17,7 @@ public class PersonMoraleController {
     @PostMapping("/addcompany")
     public ResponseEntity<PersonMorale> addCompany(@RequestBody PersonMorale personMorale) {
         try {
-            PersonMorale newCompany = personMoraleService.addCompany(personMorale);
+            PersonMorale newCompany = personMoraleService.save(personMorale);
             return new ResponseEntity<>(newCompany, HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -27,7 +27,7 @@ public class PersonMoraleController {
     @GetMapping("/company/{id}")
     public ResponseEntity<PersonMorale> getCompanyById(@PathVariable Integer id) {
         try {
-            PersonMorale personMorale = personMoraleService.findCompanybyid(id);
+            PersonMorale personMorale = personMoraleService.findById(id);
             return ResponseEntity.ok(personMorale);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -36,7 +36,7 @@ public class PersonMoraleController {
     @PutMapping("/updatecompany/{id}")
     public ResponseEntity<PersonMorale> updateCompany(@PathVariable Integer id, @RequestBody PersonMorale personMorale) {
         try {
-            PersonMorale updatedPersonMorale = personMoraleService.updatePersonMorale(id, personMorale);
+            PersonMorale updatedPersonMorale = personMoraleService.update(id, personMorale);
             return ResponseEntity.ok(updatedPersonMorale);
         } catch (UserNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
@@ -44,13 +44,13 @@ public class PersonMoraleController {
     }
     @GetMapping("/companies")
     public ResponseEntity<List<PersonMorale>> getAllCompanies() {
-        List<PersonMorale> personMorales = personMoraleService.findAllCompanies();
+        List<PersonMorale> personMorales = personMoraleService.findAll();
         return new ResponseEntity<>(personMorales, HttpStatus.OK);
     }
     @DeleteMapping("/deletecompany/{id}")
     public ResponseEntity<Void> deleteCompany(@PathVariable Integer id) {
         try {
-            personMoraleService.deleteCompany(id);
+            personMoraleService.delete(id);
             return ResponseEntity.noContent().build();
         } catch (UserNotFoundException e) {
             return ResponseEntity.notFound().build();

@@ -6,6 +6,6 @@ import java.util.Optional;
 // ===== GOF Abstract : Interface spécialisée pour PersonPhysique =====
 
 public interface PersonnePhysiqueRepository extends PersonRepository<PersonPhysique> {
-    static Optional<PersonPhysique> findByCin(String cin);
+     Optional<PersonPhysique> findByCin(String cin);
 }
 
