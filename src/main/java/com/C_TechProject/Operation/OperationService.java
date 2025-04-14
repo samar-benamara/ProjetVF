@@ -14,7 +14,6 @@ import com.C_TechProject.user.UserNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -52,10 +51,10 @@ public class OperationService {
         Bank bank = bankRepository.findByNameBanque(operation.getBank());
         LegalEntity legalEntity = legalEntityRepository.findByNameEntity(operation.getLegalEntity());
         BankAccount bankAccount = bankAccountRepository.findBankAccountByRib(operation.getBankAccount());
-        PersonPhysique personPhysique = operation.getPersonnePhysique() != null ?
-                personnePhysiqueRepository.findByCin(operation.getPersonnePhysique()) : null;
-        PersonMorale personMorale = operation.getPersonneMorale() != null ?
-                personneMoraleRepository.findByCode(operation.getPersonneMorale()) : null;
+        Optional<PersonPhysique> personPhysique = operation.getPersonnePhysique() != null ?
+                PersonnePhysiqueRepository.findByCin(operation.getPersonnePhysique()) : null;
+        Optional<PersonMorale> personMorale = operation.getPersonneMorale() != null ?
+                PersonneMoraleRepository.findByCode(operation.getPersonneMorale()) : null;
 
         Operation operationEntity = new Operation();
         operationEntity.setType(operation.getType());
@@ -66,8 +65,8 @@ public class OperationService {
         operationEntity.setBank(bank);
         operationEntity.setLegalEntity(legalEntity);
         operationEntity.setBankAccount(bankAccount);
-        operationEntity.setPersonnePhysique(personPhysique);
-        operationEntity.setPersonneMorale(personMorale);
+        operationEntity.setPersonnePhysique(personPhysique.orElse(null));
+        operationEntity.setPersonneMorale(personMorale.orElse(null));
 
         Operation savedOperation = operationRepository.save(operationEntity);
         return savedOperation;
@@ -159,13 +158,13 @@ public class OperationService {
         }
         if (newOperation.getPersonnePhysique() != null &&
                 (operation.getPersonnePhysique() == null || !newOperation.getPersonnePhysique().equals(operation.getPersonnePhysique().getCin()))) {
-            PersonPhysique personPhysique = personnePhysiqueRepository.findByCin(newOperation.getPersonnePhysique());
-            operation.setPersonnePhysique(personPhysique);
+            Optional<PersonPhysique> personPhysique = PersonnePhysiqueRepository.findByCin(newOperation.getPersonnePhysique());
+            operation.setPersonnePhysique(personPhysique.orElse(null));
         }
         if (newOperation.getPersonneMorale() != null &&
                 (operation.getPersonneMorale() == null || !newOperation.getPersonneMorale().equals(operation.getPersonneMorale().getCode()))) {
-            PersonMorale personMorale = personneMoraleRepository.findByCode(newOperation.getPersonneMorale());
-            operation.setPersonneMorale(personMorale);
+            Optional<PersonMorale> personMorale = PersonneMoraleRepository.findByCode(newOperation.getPersonneMorale());
+            operation.setPersonneMorale(personMorale.orElse(null));
         }
 
         return operationRepository.save(operation);

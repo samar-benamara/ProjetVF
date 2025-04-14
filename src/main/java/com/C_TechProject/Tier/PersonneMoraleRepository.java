@@ -5,8 +5,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;
 
-public interface PersonneMoraleRepository extends JpaRepository<PersonMorale,Integer> {
-    Optional<PersonMorale> findCompanyById(Integer id);
-    PersonMorale findByCode(String code);
-    PersonMorale findByRib(String rib);
+
+import java.util.Optional;
+
+// ===== GOF Abstract : Interface spécialisée pour PersonMorale =====
+
+public interface PersonneMoraleRepository extends PersonRepository<PersonMorale> {
+    static Optional<PersonMorale> findByCode(String code);
 }
+

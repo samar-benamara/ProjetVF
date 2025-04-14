@@ -30,5 +30,7 @@ public class SecurityApplication {
 		urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
 		return new CorsFilter(urlBasedCorsConfigurationSource);
 
+
+
 	}
 }

@@ -4,32 +4,23 @@ import com.C_TechProject.Operation.Operation;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.math.BigInteger;
 import java.util.List;
+// ===== GOF Abstract : Classe concrète spécialisée =====
 
+@Entity
+@Table(name = "_PersonMorale")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "_PersonMorale")
-public class PersonMorale {
-    @Id
-    @GeneratedValue
-    private Integer id;
+@EqualsAndHashCode(callSuper = true)
+public class PersonMorale extends Person {
     private String name;
     private String code;
-    private String email;
-    private String contact;
 
-    @Column(name = "rib", columnDefinition = "BIGINT")
-
-    private String rib;
-
-    @OneToMany(mappedBy = "personneMorale", cascade = CascadeType.ALL)
-    @Transient
+    @OneToMany(mappedBy = "personneMorale", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Operation> operations;
-
-
 }
+

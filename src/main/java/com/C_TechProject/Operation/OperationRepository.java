@@ -1,5 +1,6 @@
 package com.C_TechProject.Operation;
 
+
 import com.C_TechProject.Bordereau.Bordereau;
 import com.C_TechProject.Tier.PersonMorale;
 import com.C_TechProject.Tier.PersonPhysique;
@@ -15,8 +16,8 @@ public interface OperationRepository extends JpaRepository <Operation,Integer>  
 
 
     List<Operation> findByBankAccount(BankAccount bankAccount);
-    List<Operation> findByPersonneMorale(PersonMorale personneMorale);
-    List<Operation> findByPersonnePhysique(PersonPhysique personnePhysique);
+    List<Operation> findByPersonneMorale(PersonMorale personMorale);
+    List<Operation> findByPersonnePhysique(com.C_TechProject.Tier.PersonPhysique personPhysique);
 
 
 
