@@ -49,6 +49,11 @@ public class OperationService {
             throw new IllegalArgumentException("Missing required fields in the Operation entity");
         }
 
+        // Vérification du type "receipt" ou "disbursement"
+        if (!operation.getType().equals("receipt") && !operation.getType().equals("disbursement")) {
+            throw new IllegalArgumentException("Invalid operation type. Only 'receipt' or 'disbursement' are allowed.");
+        }
+
         Bank bank = bankRepository.findByNameBanque(operation.getBank());
         LegalEntity legalEntity = legalEntityRepository.findByNameEntity(operation.getLegalEntity());
         BankAccount bankAccount = bankAccountRepository.findBankAccountByRib(operation.getBankAccount());
@@ -58,8 +63,7 @@ public class OperationService {
                 personneMoraleRepository.findByCode(operation.getPersonneMorale()) : null;
 
         Operation operationEntity = new Operation();
-        operationEntity.setType(operation.getType());
-        operationEntity.setEtat(operation.getEtat());
+        operationEntity.setType(operation.getType());  // Le type peut maintenant être "receipt" ou "disbursement"
         operationEntity.setMontant(operation.getMontant());
         operationEntity.setReglement(operation.getReglement());
         operationEntity.setNumcheque(operation.getNumcheque());
@@ -69,32 +73,9 @@ public class OperationService {
         operationEntity.setPersonnePhysique(personPhysique);
         operationEntity.setPersonneMorale(personMorale);
 
+        // Enregistrement de l'opération
         Operation savedOperation = operationRepository.save(operationEntity);
         return savedOperation;
-    }
-
-    public OperationResponse findOperationById(Integer id) {
-        Optional<Operation> operation = operationRepository.findById(id);
-        if (operation.isPresent()) {
-            Operation op = operation.get();
-            OperationResponse response = new OperationResponse();
-            response.setId(op.getId());
-            response.setType(op.getType());
-            response.setEtat(op.getEtat());
-            response.setMontant(op.getMontant());
-            response.setReglement(op.getReglement());
-            response.setNumcheque(op.getNumcheque() != null ? op.getNumcheque() : null);
-            response.setBank(op.getBank().getNameBanque());
-            response.setLegalEntity(op.getLegalEntity().getNameEntity());
-            response.setBankAccount(op.getBankAccount().getRib());
-            response.setPersonnePhysique(op.getPersonnePhysique() != null ? op.getPersonnePhysique().getCin() : null);
-            response.setPersonneMorale(op.getPersonneMorale() != null ? op.getPersonneMorale().getCode() : null);
-            response.setCreationDate(String.valueOf(op.getCreationDate()));
-
-            return response;
-        } else {
-            throw new RuntimeException("Operation not found with ID: " + id);
-        }
     }
 
     public List<OperationResponse> findAllOperations() {
@@ -104,7 +85,6 @@ public class OperationService {
                     OperationResponse response = new OperationResponse();
                     response.setId(operation.getId());
                     response.setType(operation.getType());
-                    response.setEtat(operation.getEtat());
                     response.setMontant(operation.getMontant());
                     response.setReglement(operation.getReglement());
                     response.setNumcheque(operation.getNumcheque());
@@ -137,9 +117,6 @@ public class OperationService {
         }
         if (newOperation.getReglement() != null && !newOperation.getReglement().equals(operation.getReglement())) {
             operation.setReglement(newOperation.getReglement());
-        }
-        if (newOperation.getEtat() != null && !newOperation.getEtat().equals(operation.getEtat())) {
-            operation.setEtat(newOperation.getEtat());
         }
         if (newOperation.getNumcheque() != null && !newOperation.getNumcheque().equals(operation.getNumcheque())) {
             operation.setNumcheque(newOperation.getNumcheque());
