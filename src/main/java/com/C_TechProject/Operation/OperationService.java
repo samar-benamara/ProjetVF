@@ -49,9 +49,9 @@ public class OperationService {
             throw new IllegalArgumentException("Missing required fields in the Operation entity");
         }
 
-        // Vérification du type "receipt" ou "disbursement"
-        if (!operation.getType().equals("receipt") && !operation.getType().equals("disbursement")) {
-            throw new IllegalArgumentException("Invalid operation type. Only 'receipt' or 'disbursement' are allowed.");
+        if (operation.getType() == null || operation.getEtat() == null || operation.getReglement() == null ||
+                operation.getBank() == null || operation.getLegalEntity() == null || operation.getBankAccount() == null) {
+            throw new IllegalArgumentException("Missing required fields in the Operation entity");
         }
 
         Bank bank = bankRepository.findByNameBanque(operation.getBank());
