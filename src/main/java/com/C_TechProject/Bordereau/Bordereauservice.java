@@ -36,17 +36,19 @@ public class Bordereauservice {
     }
 
     public Bordereau addOperationsToBordereau(Integer idBordereau, List<Integer> idsOperations) {
-
         Bordereau bordereau = bordereauRepository.getBordereauById(idBordereau);
-
         List<Operation> operations = operationRepository.findAllById(idsOperations);
 
-        operations.forEach(operation -> operation.setEtat("Valid"));
-
-        bordereau.getOperations().addAll(operations);
-
+        for (Operation operation : operations) {
+            if (!"WAITING".equals(operation.getEtat())) {
+                throw new IllegalStateException("Seules les opérations en état 'WAITING' peuvent être ajoutées à un bordereau. Opération refusée : ID = " + operation.getId());
+            }
+            operation.setEtat("Valid"); // Marquer comme validée uniquement après ajout
+            bordereau.getOperations().add(operation);
+        }
         return bordereauRepository.save(bordereau);
     }
+
 
     public List<OperationResponse> getOperationsInBordereau(Integer idBordereau) {
         Bordereau bordereau = bordereauRepository.getBordereauById(idBordereau);
