@@ -3,7 +3,6 @@ package com.C_TechProject.Tier;
 import jakarta.persistence.*;
 import lombok.Data;
 
-// ===== GOF Abstract : Classe abstraite pour généraliser les types de personnes =====
 
 @Data
 @MappedSuperclass

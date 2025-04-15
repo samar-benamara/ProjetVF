@@ -17,16 +17,6 @@ public class PersonPhysiqueController {
 // comment
     public final PersonnePhysiqueService personnePhysiqueService;
 
-    @PostMapping("/addperson")
-    public ResponseEntity<PersonPhysique> addPerson(@RequestBody PersonPhysique personPhysique) {
-        try {
-            PersonPhysique newPerson = personnePhysiqueService.save(personPhysique);
-            return new ResponseEntity<>(newPerson, HttpStatus.CREATED);
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        }
-    }
-
     @GetMapping("/person/{id}")
     public ResponseEntity<PersonPhysique> getPersonById(@PathVariable Integer id) {
         try {

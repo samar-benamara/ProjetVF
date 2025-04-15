@@ -14,15 +14,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PersonMoraleController {
     public final PersonMoraleService personMoraleService;
-    @PostMapping("/addcompany")
-    public ResponseEntity<PersonMorale> addCompany(@RequestBody PersonMorale personMorale) {
-        try {
-            PersonMorale newCompany = personMoraleService.save(personMorale);
-            return new ResponseEntity<>(newCompany, HttpStatus.CREATED);
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-    }
 
     @GetMapping("/company/{id}")
     public ResponseEntity<PersonMorale> getCompanyById(@PathVariable Integer id) {
