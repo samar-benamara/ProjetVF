@@ -29,8 +29,8 @@ OperationSerializer extends StdSerializer<Operation> {
         gen.writeObjectField("bank", value.getBank().getNameBanque());
         gen.writeObjectField("legalEntity", value.getLegalEntity().getNameEntity());
         gen.writeObjectField("bankAccount", value.getBankAccount());
-        gen.writeObjectField("personnePhysique", value.getPersonnePhysique().getFirstName());
-        gen.writeObjectField("personneMorale", value.getPersonneMorale().getName());
+        gen.writeObjectField("personnePhysique", value.getPersonnePhysique().getPrenom());
+        gen.writeObjectField("personneMorale", value.getPersonneMorale().getNom());
         gen.writeObjectField("creationDate", value.getCreationDate());
         gen.writeEndObject();
     }

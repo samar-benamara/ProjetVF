@@ -1,9 +1,7 @@
 package com.C_TechProject.Operation;
 
-import com.C_TechProject.Bordereau.Bordereau;
-import com.C_TechProject.Tier.PersonMorale;
-import com.C_TechProject.Tier.PersonPhysique;
-import com.C_TechProject.bank.Bank;
+import com.C_TechProject.Tier.PersonneMorale;
+import com.C_TechProject.Tier.PersonnePhysique;
 import com.C_TechProject.bankAccount.BankAccount;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -15,8 +13,8 @@ public interface OperationRepository extends JpaRepository <Operation,Integer>  
 
 
     List<Operation> findByBankAccount(BankAccount bankAccount);
-    List<Operation> findByPersonneMorale(PersonMorale personneMorale);
-    List<Operation> findByPersonnePhysique(PersonPhysique personnePhysique);
+    List<Operation> findByPersonneMorale(PersonneMorale personneMorale);
+    List<Operation> findByPersonnePhysique(PersonnePhysique personnePhysique);
 
 
 

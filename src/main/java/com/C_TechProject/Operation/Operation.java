@@ -1,7 +1,7 @@
 package com.C_TechProject.Operation;
 
-import com.C_TechProject.Tier.PersonMorale;
-import com.C_TechProject.Tier.PersonPhysique;
+import com.C_TechProject.Tier.PersonneMorale;
+import com.C_TechProject.Tier.PersonnePhysique;
 import com.C_TechProject.bank.Bank;
 import com.C_TechProject.bankAccount.BankAccount;
 import com.C_TechProject.legalEntity.LegalEntity;
@@ -39,11 +39,11 @@ public class Operation {
 
     @ManyToOne
     @JoinColumn(name = "personnePhysique_id")
-    private PersonPhysique personnePhysique;
+    private PersonnePhysique personnePhysique;
 
     @ManyToOne
     @JoinColumn(name = "personneMorale_id")
-    private PersonMorale personneMorale;
+    private PersonneMorale personneMorale;
 
     @Temporal(TemporalType.DATE)
     private Date creationDate;
@@ -126,19 +126,19 @@ public class Operation {
         this.bankAccount = bankAccount;
     }
 
-    public PersonPhysique getPersonnePhysique() {
+    public PersonnePhysique getPersonnePhysique() {
         return personnePhysique;
     }
 
-    public void setPersonnePhysique(PersonPhysique personnePhysique) {
+    public void setPersonnePhysique(PersonnePhysique personnePhysique) {
         this.personnePhysique = personnePhysique;
     }
 
-    public PersonMorale getPersonneMorale() {
+    public PersonneMorale getPersonneMorale() {
         return personneMorale;
     }
 
-    public void setPersonneMorale(PersonMorale personneMorale) {
+    public void setPersonneMorale(PersonneMorale personneMorale) {
         this.personneMorale = personneMorale;
     }
 

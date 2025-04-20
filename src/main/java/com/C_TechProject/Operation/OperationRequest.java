@@ -1,14 +1,7 @@
 package com.C_TechProject.Operation;
 
-import com.C_TechProject.Tier.PersonMorale;
-import com.C_TechProject.Tier.PersonPhysique;
-import com.C_TechProject.bank.Bank;
-import com.C_TechProject.bankAccount.BankAccount;
-import com.C_TechProject.legalEntity.LegalEntity;
-import io.micrometer.common.lang.Nullable;
+import com.C_TechProject.Tier.PersonneMorale;
 import jakarta.persistence.Column;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

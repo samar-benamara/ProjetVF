@@ -1,9 +1,6 @@
 package com.C_TechProject.Operation;
 
-import com.C_TechProject.Tier.PersonMorale;
-import com.C_TechProject.Tier.PersonPhysique;
-import com.C_TechProject.Tier.PersonneMoraleRepository;
-import com.C_TechProject.Tier.PersonnePhysiqueRepository;
+import com.C_TechProject.Tier.*;
 import com.C_TechProject.bank.Bank;
 import com.C_TechProject.bank.BankRepository;
 import com.C_TechProject.bankAccount.BankAccount;
@@ -14,9 +11,7 @@ import com.C_TechProject.user.UserNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -57,9 +52,9 @@ public class OperationService {
         Bank bank = bankRepository.findByNameBanque(operation.getBank());
         LegalEntity legalEntity = legalEntityRepository.findByNameEntity(operation.getLegalEntity());
         BankAccount bankAccount = bankAccountRepository.findBankAccountByRib(operation.getBankAccount());
-        PersonPhysique personPhysique = operation.getPersonnePhysique() != null ?
+        PersonnePhysique personPhysique = operation.getPersonnePhysique() != null ?
                 personnePhysiqueRepository.findByCin(operation.getPersonnePhysique()) : null;
-        PersonMorale personMorale = operation.getPersonneMorale() != null ?
+        PersonneMorale personMorale = operation.getPersonneMorale() != null ?
                 personneMoraleRepository.findByCode(operation.getPersonneMorale()) : null;
 
         Operation operationEntity = new Operation();
@@ -136,12 +131,12 @@ public class OperationService {
         }
         if (newOperation.getPersonnePhysique() != null &&
                 (operation.getPersonnePhysique() == null || !newOperation.getPersonnePhysique().equals(operation.getPersonnePhysique().getCin()))) {
-            PersonPhysique personPhysique = personnePhysiqueRepository.findByCin(newOperation.getPersonnePhysique());
+            PersonnePhysique personPhysique = personnePhysiqueRepository.findByCin(newOperation.getPersonnePhysique());
             operation.setPersonnePhysique(personPhysique);
         }
         if (newOperation.getPersonneMorale() != null &&
                 (operation.getPersonneMorale() == null || !newOperation.getPersonneMorale().equals(operation.getPersonneMorale().getCode()))) {
-            PersonMorale personMorale = personneMoraleRepository.findByCode(newOperation.getPersonneMorale());
+            PersonneMorale personMorale = personneMoraleRepository.findByCode(newOperation.getPersonneMorale());
             operation.setPersonneMorale(personMorale);
         }
 
