@@ -4,6 +4,7 @@ package com.C_TechProject.Bordereau;
 import com.C_TechProject.Operation.Operation;
 import com.C_TechProject.Operation.OperationRepository;
 import com.C_TechProject.Operation.OperationResponse;
+import com.C_TechProject.Operation.PaymentType;
 import com.C_TechProject.bank.Bank;
 import com.C_TechProject.bank.BankRepository;
 import com.C_TechProject.user.UserNotFoundException;
@@ -35,18 +36,28 @@ public class Bordereauservice {
 
     }
 
-    public Bordereau addOperationsToBordereau(Integer idBordereau, List<Integer> idsOperations) {
+public Bordereau addOperationsToBordereau(Integer idBordereau, List<Integer> idsOperations) {
+    Bordereau bordereau = bordereauRepository.getBordereauById(idBordereau);
+    List<Operation> operations = operationRepository.findAllById(idsOperations);
 
-        Bordereau bordereau = bordereauRepository.getBordereauById(idBordereau);
+    for (Operation operation : operations) {
 
-        List<Operation> operations = operationRepository.findAllById(idsOperations);
+        
+        if (operation.getPaymentType() == PaymentType.CHEQUE && operation.getNumcheque() == null) {
+            throw new IllegalArgumentException("Numéro de chèque requis pour l’opération ID " + operation.getId());
+        }
 
-        operations.forEach(operation -> operation.setEtat("Valid"));
+        if (operation.getPaymentType() == PaymentType.TRANSFERT && operation.getReglement() == null) {
+            throw new IllegalArgumentException("Motif requis pour le virement de l’opération ID " + operation.getId());
+        }
 
-        bordereau.getOperations().addAll(operations);
-
-        return bordereauRepository.save(bordereau);
+        operation.setEtat("Valid");
     }
+
+    bordereau.getOperations().addAll(operations);
+    return bordereauRepository.save(bordereau);
+}
+
 
     public List<OperationResponse> getOperationsInBordereau(Integer idBordereau) {
         Bordereau bordereau = bordereauRepository.getBordereauById(idBordereau);
