@@ -23,6 +23,7 @@ public class OperationRequest {
 
 
     private String type;
+    private PaymentType paymentType;
     private String etat;
 
     private String reglement ;

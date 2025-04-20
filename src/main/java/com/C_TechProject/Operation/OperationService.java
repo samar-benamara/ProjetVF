@@ -44,15 +44,26 @@ public class OperationService {
     }
 
     public Operation addOperation(OperationRequest operation) throws Exception {
-        if (operation.getType() == null || operation.getEtat() == null || operation.getReglement() == null ||
-                operation.getBank() == null || operation.getLegalEntity() == null || operation.getBankAccount() == null) {
-            throw new IllegalArgumentException("Missing required fields in the Operation entity");
-        }
+      if (operation.getType() == null || operation.getEtat() == null || operation.getReglement() == null ||
+    operation.getBank() == null || operation.getLegalEntity() == null || operation.getBankAccount() == null ||
+    operation.getPaymentType() == null) {
+    throw new IllegalArgumentException("Missing required fields in the Operation entity");
+}
+
 
         // Vérification du type "receipt" ou "disbursement"
         if (!operation.getType().equals("receipt") && !operation.getType().equals("disbursement")) {
             throw new IllegalArgumentException("Invalid operation type. Only 'receipt' or 'disbursement' are allowed.");
         }
+
+        if (operation.getPaymentType() == PaymentType.CHEQUE && operation.getNumcheque() == null) {
+          throw new IllegalArgumentException("Le numéro de chèque est obligatoire pour un paiement par chèque.");
+      }
+      
+      if (operation.getPaymentType() == PaymentType.TRANSFERT && operation.getReglement() == null) {
+          throw new IllegalArgumentException("Le motif est obligatoire pour un paiement par virement.");
+      }
+      
 
         Bank bank = bankRepository.findByNameBanque(operation.getBank());
         LegalEntity legalEntity = legalEntityRepository.findByNameEntity(operation.getLegalEntity());
@@ -64,6 +75,7 @@ public class OperationService {
 
         Operation operationEntity = new Operation();
         operationEntity.setType(operation.getType());  // Le type peut maintenant être "receipt" ou "disbursement"
+        operationEntity.setPaymentType(operation.getPaymentType());
         operationEntity.setMontant(operation.getMontant());
         operationEntity.setReglement(operation.getReglement());
         operationEntity.setNumcheque(operation.getNumcheque());
@@ -109,42 +121,66 @@ public class OperationService {
     }
 
     public Operation updateOperation(Integer id, OperationRequest newOperation) throws Exception {
-        Operation operation = operationRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("Operation not found with ID: " + id));
-
-        if (newOperation.getType() != null && !newOperation.getType().equals(operation.getType())) {
-            operation.setType(newOperation.getType());
-        }
-        if (newOperation.getReglement() != null && !newOperation.getReglement().equals(operation.getReglement())) {
-            operation.setReglement(newOperation.getReglement());
-        }
-        if (newOperation.getNumcheque() != null && !newOperation.getNumcheque().equals(operation.getNumcheque())) {
-            operation.setNumcheque(newOperation.getNumcheque());
-        }
-
-        if (newOperation.getBank() != null && !newOperation.getBank().equals(operation.getBank().getNameBanque())) {
-            Bank bank = bankRepository.findByNameBanque(newOperation.getBank());
-            operation.setBank(bank);
-        }
-        if (newOperation.getLegalEntity() != null && !newOperation.getLegalEntity().equals(operation.getLegalEntity().getNameEntity())) {
-            LegalEntity legalEntity = legalEntityRepository.findByNameEntity(newOperation.getLegalEntity());
-            operation.setLegalEntity(legalEntity);
-        }
-        if (newOperation.getBankAccount() != null && !newOperation.getBankAccount().equals(operation.getBankAccount().getRib())) {
-            BankAccount bankAccount = bankAccountRepository.findBankAccountByRib(newOperation.getBankAccount());
-            operation.setBankAccount(bankAccount);
-        }
-        if (newOperation.getPersonnePhysique() != null &&
-                (operation.getPersonnePhysique() == null || !newOperation.getPersonnePhysique().equals(operation.getPersonnePhysique().getCin()))) {
-            PersonPhysique personPhysique = personnePhysiqueRepository.findByCin(newOperation.getPersonnePhysique());
-            operation.setPersonnePhysique(personPhysique);
-        }
-        if (newOperation.getPersonneMorale() != null &&
-                (operation.getPersonneMorale() == null || !newOperation.getPersonneMorale().equals(operation.getPersonneMorale().getCode()))) {
-            PersonMorale personMorale = personneMoraleRepository.findByCode(newOperation.getPersonneMorale());
-            operation.setPersonneMorale(personMorale);
-        }
-
-        return operationRepository.save(operation);
-    }
+      Operation operation = operationRepository.findById(id)
+              .orElseThrow(() -> new UserNotFoundException("Operation not found with ID: " + id));
+  
+      if (newOperation.getType() != null && !newOperation.getType().equals(operation.getType())) {
+          operation.setType(newOperation.getType());
+      }
+  
+      if (newOperation.getReglement() != null && !newOperation.getReglement().equals(operation.getReglement())) {
+          operation.setReglement(newOperation.getReglement());
+      }
+  
+      if (newOperation.getNumcheque() != null && !newOperation.getNumcheque().equals(operation.getNumcheque())) {
+          operation.setNumcheque(newOperation.getNumcheque());
+      }
+  
+      
+      if (newOperation.getPaymentType() != null && !newOperation.getPaymentType().equals(operation.getPaymentType())) {
+          operation.setPaymentType(newOperation.getPaymentType());
+      }
+  
+    
+      if (operation.getPaymentType() == PaymentType.CHEQUE && operation.getNumcheque() == null) {
+          throw new IllegalArgumentException("Numéro de chèque requis pour un paiement par chèque.");
+      }
+      if (operation.getPaymentType() == PaymentType.TRANSFERT && operation.getReglement() == null) {
+          throw new IllegalArgumentException("Motif requis pour un virement.");
+      }
+  
+      if (newOperation.getBank() != null && !newOperation.getBank().equals(operation.getBank().getNameBanque())) {
+          Bank bank = bankRepository.findByNameBanque(newOperation.getBank());
+          operation.setBank(bank);
+      }
+  
+      if (newOperation.getLegalEntity() != null &&
+              !newOperation.getLegalEntity().equals(operation.getLegalEntity().getNameEntity())) {
+          LegalEntity legalEntity = legalEntityRepository.findByNameEntity(newOperation.getLegalEntity());
+          operation.setLegalEntity(legalEntity);
+      }
+  
+      if (newOperation.getBankAccount() != null &&
+              !newOperation.getBankAccount().equals(operation.getBankAccount().getRib())) {
+          BankAccount bankAccount = bankAccountRepository.findBankAccountByRib(newOperation.getBankAccount());
+          operation.setBankAccount(bankAccount);
+      }
+  
+      if (newOperation.getPersonnePhysique() != null &&
+              (operation.getPersonnePhysique() == null ||
+                      !newOperation.getPersonnePhysique().equals(operation.getPersonnePhysique().getCin()))) {
+          PersonPhysique personPhysique = personnePhysiqueRepository.findByCin(newOperation.getPersonnePhysique());
+          operation.setPersonnePhysique(personPhysique);
+      }
+  
+      if (newOperation.getPersonneMorale() != null &&
+              (operation.getPersonneMorale() == null ||
+                      !newOperation.getPersonneMorale().equals(operation.getPersonneMorale().getCode()))) {
+          PersonMorale personMorale = personneMoraleRepository.findByCode(newOperation.getPersonneMorale());
+          operation.setPersonneMorale(personMorale);
+      }
+  
+      return operationRepository.save(operation);
+  }
+  
 }
