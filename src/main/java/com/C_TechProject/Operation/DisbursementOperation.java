@@ -1,5 +1,7 @@
 package com.C_TechProject.Operation;
 
+import org.springframework.stereotype.Component;
+
 @Component
 public class DisbursementOperation implements OperationType {
 

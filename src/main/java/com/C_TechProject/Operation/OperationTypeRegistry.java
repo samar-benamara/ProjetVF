@@ -1,6 +1,11 @@
 package com.C_TechProject.Operation;
 
 import com.C_TechProject.Operation.OperationType;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class OperationTypeRegistry {
@@ -9,7 +14,7 @@ public class OperationTypeRegistry {
 
     public OperationTypeRegistry(List<OperationType> list) {
         this.types = list.stream()
-            .collect(Collectors.toMap(t -> t.getType().toLowerCase(), t -> t));
+                .collect(Collectors.toMap(t -> t.getType().toLowerCase(), t -> t));
     }
 
     public OperationType getHandler(String type) {
