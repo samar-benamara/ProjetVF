@@ -46,9 +46,6 @@ public class Bordereauservice {
 
         return bordereauRepository.save(bordereau);
     }
-
-
-
    /* public List<OperationResponse> getOperationsInBordereau(Integer idBordereau) {
         Bordereau bordereau = bordereauRepository.getBordereauById(idBordereau);
         return bordereau.getOperations().stream()

@@ -4,7 +4,7 @@ public class WaitingState implements OperationState {
 
     @Override
     public void valider(Operation operation) {
-        operation.setState(new ValidState()); // Changement d’état
+        operation.setState(new ValidState()); 
     }
 
     @Override
