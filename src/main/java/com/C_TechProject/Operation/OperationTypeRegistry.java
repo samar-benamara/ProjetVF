@@ -1,3 +1,7 @@
+package com.C_TechProject.Operation;
+
+import com.C_TechProject.Operation.OperationType;
+
 @Component
 public class OperationTypeRegistry {
 
