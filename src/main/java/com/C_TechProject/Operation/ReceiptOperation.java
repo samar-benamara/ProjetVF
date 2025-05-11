@@ -1,16 +1,19 @@
 package com.C_TechProject.Operation;
 
 
+@Component
 public class ReceiptOperation implements OperationType {
+
     @Override
     public String getType() {
         return "receipt";
     }
 
     @Override
-    public void validate(OperationRequest request) {
-        // Ajoute des validations spécifiques à "receipt" si besoin
+    public void handle() {
+        System.out.println("Handling receipt operation");
     }
 }
+
 
 

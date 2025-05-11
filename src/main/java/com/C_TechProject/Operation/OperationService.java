@@ -14,46 +14,45 @@ import com.C_TechProject.user.UserNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @Transactional
 public class OperationService {
+
     private final OperationRepository operationRepository;
     private final BankRepository bankRepository;
     private final BankAccountRepository bankAccountRepository;
     private final LegalEntityRepository legalEntityRepository;
     private final PersonnePhysiqueRepository personnePhysiqueRepository;
     private final PersonneMoraleRepository personneMoraleRepository;
+    private final OperationTypeRegistry operationTypeRegistry;
 
     public OperationService(OperationRepository operationRepository,
                             BankRepository bankRepository,
                             BankAccountRepository bankAccountRepository,
                             LegalEntityRepository legalEntityRepository,
                             PersonnePhysiqueRepository personnePhysiqueRepository,
-                            PersonneMoraleRepository personneMoraleRepository) {
+                            PersonneMoraleRepository personneMoraleRepository,
+                            OperationTypeRegistry operationTypeRegistry) {
         this.operationRepository = operationRepository;
         this.bankRepository = bankRepository;
         this.bankAccountRepository = bankAccountRepository;
         this.legalEntityRepository = legalEntityRepository;
         this.personnePhysiqueRepository = personnePhysiqueRepository;
         this.personneMoraleRepository = personneMoraleRepository;
+        this.operationTypeRegistry = operationTypeRegistry;
     }
 
     public Operation addOperation(OperationRequest operation) throws Exception {
-        if (operation.getType() == null || operation.getEtat() == null || operation.getReglement() == null ||
-                operation.getBank() == null || operation.getLegalEntity() == null || operation.getBankAccount() == null) {
-            throw new IllegalArgumentException("Missing required fields in the Operation entity");
+        if (operation.getType() == null) {
+            throw new IllegalArgumentException("Le type d'opération est requis.");
         }
 
-        if (operation.getType() == null || operation.getEtat() == null || operation.getReglement() == null ||
-                operation.getBank() == null || operation.getLegalEntity() == null || operation.getBankAccount() == null) {
-            throw new IllegalArgumentException("Missing required fields in the Operation entity");
-        }
-
+        // Appel du bon handler selon OCP
+        OperationType handler = operationTypeRegistry.getHandler(operation.getType());
+        handler.handle(); 
         Bank bank = bankRepository.findByNameBanque(operation.getBank());
         LegalEntity legalEntity = legalEntityRepository.findByNameEntity(operation.getLegalEntity());
         BankAccount bankAccount = bankAccountRepository.findBankAccountByRib(operation.getBankAccount());
@@ -63,7 +62,7 @@ public class OperationService {
                 personneMoraleRepository.findByCode(operation.getPersonneMorale()) : null;
 
         Operation operationEntity = new Operation();
-        operationEntity.setType(operation.getType());  // Le type peut maintenant être "receipt" ou "disbursement"
+        operationEntity.setType(operation.getType());
         operationEntity.setMontant(operation.getMontant());
         operationEntity.setReglement(operation.getReglement());
         operationEntity.setNumcheque(operation.getNumcheque());
@@ -73,9 +72,7 @@ public class OperationService {
         operationEntity.setPersonnePhysique(personPhysique);
         operationEntity.setPersonneMorale(personMorale);
 
-        // Enregistrement de l'opération
-        Operation savedOperation = operationRepository.save(operationEntity);
-        return savedOperation;
+        return operationRepository.save(operationEntity);
     }
 
     public List<OperationResponse> findAllOperations() {
@@ -96,7 +93,6 @@ public class OperationService {
                     response.setPersonneMorale(operation.getPersonneMorale() != null ?
                             operation.getPersonneMorale().getCode() : null);
                     response.setCreationDate(String.valueOf(operation.getCreationDate()));
-
                     return response;
                 })
                 .collect(Collectors.toList());
@@ -121,7 +117,6 @@ public class OperationService {
         if (newOperation.getNumcheque() != null && !newOperation.getNumcheque().equals(operation.getNumcheque())) {
             operation.setNumcheque(newOperation.getNumcheque());
         }
-
         if (newOperation.getBank() != null && !newOperation.getBank().equals(operation.getBank().getNameBanque())) {
             Bank bank = bankRepository.findByNameBanque(newOperation.getBank());
             operation.setBank(bank);
