@@ -1,10 +1,9 @@
 package com.C_TechProject.Operation;
 
 public class ValidState implements OperationState {
-
     @Override
     public void valider(Operation operation) {
-        // Déjà validée, donc pas de changement d’état
+        throw new InvalidStateTransitionException("L'opération est déjà validée.");
     }
 
     @Override
@@ -12,3 +11,5 @@ public class ValidState implements OperationState {
         return "VALID";
     }
 }
+
+

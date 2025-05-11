@@ -39,11 +39,14 @@ public class Bordereauservice {
         Bordereau bordereau = bordereauRepository.getBordereauById(idBordereau);
         List<Operation> operations = operationRepository.findAllById(idsOperations);
 
-        operations.forEach(operation -> operation.valider());
+        for (Operation operation : operations) {
+            bordereau.getOperations().add(operation);
+            operation.valider(); // Appelle WaitingState.valider() → devient ValidState
+        }
 
-        bordereau.getOperations().addAll(operations);
         return bordereauRepository.save(bordereau);
     }
+
 
 
    /* public List<OperationResponse> getOperationsInBordereau(Integer idBordereau) {
