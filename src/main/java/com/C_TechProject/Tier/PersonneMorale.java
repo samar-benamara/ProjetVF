@@ -17,7 +17,6 @@ public class PersonneMorale extends Tier {
     private String nom;
     private String code;
 
-    @OneToMany(mappedBy = "personneMorale", cascade = CascadeType.ALL)
-    @Transient
+   @OneToMany(mappedBy = "personneMorale", cascade = CascadeType.ALL)
     private List<Operation> operations;
 }

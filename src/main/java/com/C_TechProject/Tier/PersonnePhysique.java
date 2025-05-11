@@ -18,7 +18,6 @@ public class PersonnePhysique extends Tier {
     private String prenom;
     private String cin;
 
-    @OneToMany(mappedBy = "personnePhysique", cascade = CascadeType.ALL)
-    @Transient
+   @OneToMany(mappedBy = "personnePhysique", cascade = CascadeType.ALL)
     private List<Operation> operations;
 }
